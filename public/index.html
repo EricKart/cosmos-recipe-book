@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosmos DB Recipe Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main class="container">
         <section class="form-section">
-            <h1 id="form-title">My Recipe Book</h1>
+            <div class="header">
+                <h1 id="form-title">My Recipe Book</h1>
+                <div class="theme-switcher">
+                    <input type="checkbox" id="theme-toggle">
+                    <label for="theme-toggle" class="slider"></label>
+                </div>
+            </div>
             <p>Powered by Azure Cosmos DB</p>
             <form id="recipe-form">
                 <input type="text" id="name-input" placeholder="Recipe Name" required>
@@ -29,6 +38,14 @@
             </div>
         </section>
     </main>
+    <footer class="site-footer">
+        <p>Made with ❤️ by Aryan Tripathi</p>
+        <p>
+            <a href="https://aryantripathi.me/" target="_blank" rel="noopener noreferrer">aryantripathi.me</a> | 
+            <a href="mailto:aryktripathi@gmail.com">aryktripathi@gmail.com</a>
+        </p>
+        <p>Azure Cloud Trainer</p>
+   </footer>
     <script src="app.js"></script>
 </body>
 </html>

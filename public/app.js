@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
     const form = document.getElementById('recipe-form');
     const formTitle = document.getElementById('form-title');
     const nameInput = document.getElementById('name-input');
@@ -8,13 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const recipeList = document.getElementById('recipe-list');
     const submitBtn = document.getElementById('submit-btn');
     const cancelBtn = document.getElementById('cancel-edit-btn');
+    const formButtons = document.querySelector('.form-buttons');
+    const themeToggle = document.getElementById('theme-toggle');
 
     // --- State Management ---
     let isEditing = false;
     let editingId = null;
+    const cardColors = ['card-color-1', 'card-color-2', 'card-color-3', 'card-color-4', 'card-color-5'];
 
     // --- API Functions ---
-
     const fetchRecipes = async () => {
         try {
             const response = await fetch('/api/recipes');
@@ -80,19 +83,24 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- UI Functions ---
-
     const renderRecipes = (recipes) => {
         recipeList.innerHTML = '';
-        recipes.forEach(recipe => {
+        recipes.forEach((recipe, index) => {
+            const colorClass = cardColors[index % cardColors.length];
             const card = document.createElement('div');
-            card.className = 'recipe-card';
+            card.className = `recipe-card ${colorClass}`;
             card.innerHTML = `
-                <h3>${recipe.name} <small>(${recipe.course})</small></h3>
-                <h4>Ingredients</h4>
-                <pre>${recipe.ingredients}</pre>
-                <h4>Instructions</h4>
-                <pre>${recipe.instructions}</pre>
-                <div class="card-buttons">
+                <div class="card-header">
+                    <h3>${recipe.name}</h3>
+                    <small>Course: ${recipe.course}</small>
+                </div>
+                <div class="card-body">
+                    <h4>Ingredients</h4>
+                    <pre>${recipe.ingredients}</pre>
+                    <h4>Instructions</h4>
+                    <pre>${recipe.instructions}</pre>
+                </div>
+                <div class="card-footer">
                     <button class="edit-btn">Edit</button>
                     <button class="delete-btn">Delete</button>
                 </div>
@@ -114,13 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ingredientsInput.value = recipe.ingredients;
         instructionsInput.value = recipe.instructions;
 
-        // IMPORTANT: Disable partition key field during edit
         courseInput.disabled = true;
 
         submitBtn.textContent = 'Update Recipe';
-        submitBtn.style.gridColumn = 'auto'; // Reset grid span
+        formButtons.style.gridTemplateColumns = '1fr 1fr';
         cancelBtn.classList.remove('hidden');
-        window.scrollTo(0, 0); // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const resetForm = () => {
@@ -131,12 +138,28 @@ document.addEventListener('DOMContentLoaded', () => {
         formTitle.textContent = "My Recipe Book";
         courseInput.disabled = false;
         submitBtn.textContent = 'Add Recipe';
-        submitBtn.style.gridColumn = '1 / -1'; // Span full width
+        formButtons.style.gridTemplateColumns = '1fr';
         cancelBtn.classList.add('hidden');
     };
 
-    // --- Event Listeners ---
+    // --- Theme Switcher Logic ---
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        } else {
+            document.body.classList.remove('dark-mode');
+            themeToggle.checked = false;
+        }
+    };
 
+    themeToggle.addEventListener('change', () => {
+        const newTheme = themeToggle.checked ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    });
+
+    // --- Event Listeners ---
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const recipeData = {
@@ -155,6 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cancelBtn.addEventListener('click', resetForm);
 
-    // Initial fetch
+    // --- Initial Load ---
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
     fetchRecipes();
 });
